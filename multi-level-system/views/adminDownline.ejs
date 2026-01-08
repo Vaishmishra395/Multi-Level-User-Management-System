@@ -1,0 +1,83 @@
+<%- include('layout-start', {title: 'User Downline'}) %>
+<div class="card">
+    <h1>Downline Hierarchy for <%= user.username %></h1>
+    
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            <div>
+                <strong>Username:</strong> <%= user.username %>
+            </div>
+            <div>
+                <strong>Balance:</strong> ₹ <%= parseFloat(user.balance || 0).toLocaleString('en-IN') %>
+            </div>
+            <div>
+                <strong>Total Downline:</strong> <%= downline.length %> users
+            </div>
+        </div>
+    </div>
+    
+    <% if (downline && downline.length > 0) { %>
+        <h2>Downline Users</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Level</th>
+                    <th>Username</th>
+                    <th>Balance</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% downline.forEach(u => { %>
+                    <tr>
+                        <td>
+                            <span class="badge" style="background: #667eea; color: white;">
+                                Level <%= u.level %>
+                            </span>
+                        </td>
+                        <td><strong><%= u.username %></strong></td>
+                        <td style="font-weight: 600; color: #667eea;">
+                            ₹ <%= parseFloat(u.balance || 0).toLocaleString('en-IN') %>
+                        </td>
+                        <td><%= u.created_at ? new Date(u.created_at).toLocaleDateString() : 'N/A' %></td>
+                        <td>
+                            <a href="/admin/user/<%= u.id %>/credit" class="nav-link" style="padding: 5px 10px; font-size: 0.85em;">Credit</a>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+        
+        <!-- Hierarchical Tree View -->
+        <div style="margin-top: 40px;">
+            <h3>Hierarchical Tree View</h3>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                <% function renderTree(users, indent = 0) { %>
+                    <% users.forEach(user => { %>
+                        <div style="margin-left: <%= indent * 30 %>px; margin-bottom: 10px; padding: 10px; background: white; border-radius: 5px; border-left: 3px solid #667eea;">
+                            <strong><%= user.username %></strong> 
+                            <span style="color: #666; margin-left: 10px;">
+                                (Balance: ₹<%= parseFloat(user.balance || 0).toLocaleString('en-IN') %>)
+                            </span>
+                            <a href="/admin/user/<%= user.id %>/credit" style="margin-left: 10px; color: #667eea; text-decoration: none;">[Credit]</a>
+                        </div>
+                        <% if (user.children && user.children.length > 0) { %>
+                            <%= renderTree(user.children, indent + 1) %>
+                        <% } %>
+                    <% }) %>
+                <% } %>
+                <%= renderTree(hierarchicalDownline || []) %>
+            </div>
+        </div>
+    <% } else { %>
+        <div class="empty-state">
+            <p>No downline users found for this user.</p>
+        </div>
+    <% } %>
+    
+    <div style="margin-top: 30px; text-align: center;">
+        <a href="/admin" class="nav-link" style="display: inline-block;">← Back to Admin Panel</a>
+    </div>
+</div>
+<%- include('layout-end') %>

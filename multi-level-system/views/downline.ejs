@@ -1,0 +1,68 @@
+<%- include('layout-start', {title: 'View Downline'}) %>
+<div class="card">
+    <h2>Your Downline Hierarchy</h2>
+    
+    <% if (downline && downline.length > 0) { %>
+        <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+            <strong>Total Downline Users: </strong><%= downline.length %>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Level</th>
+                    <th>Username</th>
+                    <th>Balance</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% downline.forEach(u => { %>
+                    <tr>
+                        <td>
+                            <span class="badge" style="background: #667eea; color: white;">
+                                Level <%= u.level %>
+                            </span>
+                        </td>
+                        <td><strong><%= u.username %></strong></td>
+                        <td style="font-weight: 600; color: #667eea;">
+                            ₹ <%= parseFloat(u.balance || 0).toLocaleString('en-IN') %>
+                        </td>
+                        <td><%= u.created_at ? new Date(u.created_at).toLocaleDateString() : 'N/A' %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+        
+        <!-- Hierarchical Tree View -->
+        <div style="margin-top: 40px;">
+            <h3 style="margin-bottom: 20px;">Hierarchical View</h3>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                <% function renderTree(users, indent = 0) { %>
+                    <% users.forEach(user => { %>
+                        <div style="margin-left: <%= indent * 30 %>px; margin-bottom: 10px; padding: 10px; background: white; border-radius: 5px; border-left: 3px solid #667eea;">
+                            <strong><%= user.username %></strong> 
+                            <span style="color: #666; margin-left: 10px;">
+                                (Balance: ₹<%= parseFloat(user.balance || 0).toLocaleString('en-IN') %>)
+                            </span>
+                        </div>
+                        <% if (user.children && user.children.length > 0) { %>
+                            <%= renderTree(user.children, indent + 1) %>
+                        <% } %>
+                    <% }) %>
+                <% } %>
+                <%= renderTree(hierarchicalDownline || []) %>
+            </div>
+        </div>
+    <% } else { %>
+        <div class="empty-state">
+            <p>No downline users found.</p>
+            <p>Start by creating users to see your downline hierarchy.</p>
+        </div>
+    <% } %>
+    
+    <div style="margin-top: 30px; text-align: center;">
+        <a href="/dashboard" class="nav-link" style="display: inline-block;">← Back to Dashboard</a>
+    </div>
+</div>
+<%- include('layout-end') %>

@@ -1,0 +1,57 @@
+<%- include('layout-start', {title: 'Admin Panel'}) %>
+<div class="card">
+    <h1>Admin Panel</h1>
+    
+    <!-- Summary Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 15px; text-align: center;">
+            <div style="font-size: 2em; font-weight: bold;"><%= summary.total_users || 0 %></div>
+            <div style="opacity: 0.9; margin-top: 5px;">Total Users</div>
+        </div>
+        <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 20px; border-radius: 15px; text-align: center;">
+            <div style="font-size: 2em; font-weight: bold;">₹ <%= parseFloat(summary.total_balance || 0).toLocaleString('en-IN') %></div>
+            <div style="opacity: 0.9; margin-top: 5px;">Total Balance</div>
+        </div>
+        <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 20px; border-radius: 15px; text-align: center;">
+            <div style="font-size: 2em; font-weight: bold;"><%= summary.top_level_users || 0 %></div>
+            <div style="opacity: 0.9; margin-top: 5px;">Top Level Users</div>
+        </div>
+    </div>
+    
+    <h2 style="margin-top: 30px;">Next Level Users</h2>
+    
+    <% if (users && users.length > 0) { %>
+        <div class="user-list">
+            <% users.forEach(u => { %>
+                <div class="user-item">
+                    <div>
+                        <strong style="color: #667eea; font-size: 1.1em;"><%= u.username %></strong>
+                        <div style="color: #999; font-size: 0.9em; margin-top: 5px;">
+                            ID: <%= u.id %> | Role: <%= u.role || 'User' %> | 
+                            Children: <%= u.children_count || 0 %>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 1.5em; font-weight: bold; color: #667eea;">
+                            ₹ <%= parseFloat(u.balance || 0).toLocaleString('en-IN') %>
+                        </div>
+                        <div style="margin-top: 10px; display: flex; gap: 10px;">
+                            <a href="/admin/user/<%= u.id %>/downline" class="nav-link" style="padding: 8px 15px; font-size: 0.9em;">View Downline</a>
+                            <a href="/admin/user/<%= u.id %>/credit" class="nav-link btn-success" style="padding: 8px 15px; font-size: 0.9em;">Credit Balance</a>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    <% } else { %>
+        <div class="empty-state">
+            <p>No users found in the system.</p>
+        </div>
+    <% } %>
+    
+    <div style="margin-top: 30px; text-align: center;">
+        <a href="/admin/summary" class="nav-link" style="display: inline-block; margin-right: 10px;">📊 View Balance Summary</a>
+        <a href="/dashboard" class="nav-link" style="display: inline-block;">← Back to Dashboard</a>
+    </div>
+</div>
+<%- include('layout-end') %>

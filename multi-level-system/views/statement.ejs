@@ -1,0 +1,71 @@
+<%- include('layout-start', {title: 'Transaction Statement'}) %>
+<div class="card">
+    <h2>Transaction Statement</h2>
+    
+    <% if (tx && tx.length > 0) { %>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date & Time</th>
+                    <th>Type</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Amount</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% tx.forEach(t => { %>
+                    <tr>
+                        <td>
+                            <%= t.created_at ? new Date(t.created_at).toLocaleString('en-IN') : 'N/A' %>
+                        </td>
+                        <td>
+                            <span class="badge <%= t.type === 'CREDIT' ? 'badge-credit' : 'badge-debit' %>">
+                                <%= t.type %>
+                            </span>
+                        </td>
+                        <td>
+                            <% if (t.sender_username) { %>
+                                <%= t.sender_username %>
+                            <% } else { %>
+                                <span style="color: #999;">Self</span>
+                            <% } %>
+                        </td>
+                        <td>
+                            <% if (t.receiver_username) { %>
+                                <%= t.receiver_username %>
+                            <% } else { %>
+                                <span style="color: #999;">Self</span>
+                            <% } %>
+                        </td>
+                        <td style="font-weight: 600; color: <%= t.type === 'CREDIT' ? '#155724' : '#721c24' %>;">
+                            <%= t.type === 'CREDIT' ? '+' : '-' %>₹ <%= parseFloat(t.amount || 0).toLocaleString('en-IN') %>
+                        </td>
+                        <td style="color: #666; font-size: 0.9em;">
+                            <%= t.description || 'Transaction' %>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+        
+        <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+            <strong>Total Transactions: </strong><%= tx.length %>
+            <br>
+            <strong>Total Credits: </strong>₹ <%= tx.filter(t => t.type === 'CREDIT').reduce((sum, t) => sum + parseFloat(t.amount || 0), 0).toLocaleString('en-IN') %>
+            <br>
+            <strong>Total Debits: </strong>₹ <%= tx.filter(t => t.type === 'DEBIT').reduce((sum, t) => sum + parseFloat(t.amount || 0), 0).toLocaleString('en-IN') %>
+        </div>
+    <% } else { %>
+        <div class="empty-state">
+            <p>No transactions found.</p>
+            <p>Start by transferring money to see your transaction history.</p>
+        </div>
+    <% } %>
+    
+    <div style="margin-top: 30px; text-align: center;">
+        <a href="/dashboard" class="nav-link" style="display: inline-block;">← Back to Dashboard</a>
+    </div>
+</div>
+<%- include('layout-end') %>

@@ -1,0 +1,18 @@
+<%- include('layout-start', {title: typeof title !== 'undefined' ? title : 'Error'}) %>
+<div class="card">
+    <h1><%= typeof title !== 'undefined' ? title : 'Error' %></h1>
+    <div class="error" style="text-align: center; padding: 30px;">
+        <p style="font-size: 1.2em; margin-bottom: 20px;"><%= typeof message !== 'undefined' ? message : 'An error occurred' %></p>
+        <% if (typeof error !== 'undefined' && error) { %>
+            <p style="font-size: 0.9em; color: #999; margin-top: 10px;"><%= error %></p>
+        <% } %>
+    </div>
+    <div style="text-align: center; margin-top: 30px;">
+        <% if (typeof hasToken !== 'undefined' && hasToken) { %>
+            <a href="/dashboard" class="nav-link" style="display: inline-block;">← Go to Dashboard</a>
+        <% } else { %>
+            <a href="/login" class="nav-link" style="display: inline-block;">Go to Login</a>
+        <% } %>
+    </div>
+</div>
+<%- include('layout-end') %>

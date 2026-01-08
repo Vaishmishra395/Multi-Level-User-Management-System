@@ -1,0 +1,60 @@
+<%- include('layout-start', {title: 'Commission Earnings'}) %>
+<div class="card">
+    <h2>Commission Earnings</h2>
+    
+    <div class="balance-card" style="margin-bottom: 30px;">
+        <h3>Total Commission Earned</h3>
+        <div class="amount">₹ <%= parseFloat(totalCommission || 0).toLocaleString('en-IN') %></div>
+    </div>
+    
+    <% if (commissions && commissions.length > 0) { %>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>From Transaction</th>
+                    <th>Sender</th>
+                    <th>Transaction Amount</th>
+                    <th>Commission %</th>
+                    <th>Commission Earned</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% commissions.forEach(c => { %>
+                    <tr>
+                        <td>
+                            <%= c.transaction_date ? new Date(c.transaction_date).toLocaleDateString() : 'N/A' %>
+                        </td>
+                        <td style="color: #666; font-size: 0.9em;">
+                            <%= c.description || 'Transaction' %>
+                        </td>
+                        <td>
+                            <%= c.sender_username || 'N/A' %>
+                        </td>
+                        <td>
+                            ₹ <%= parseFloat(c.transaction_amount || 0).toLocaleString('en-IN') %>
+                        </td>
+                        <td>
+                            <span class="badge badge-credit">
+                                <%= parseFloat(c.percentage || 0).toFixed(2) %>%
+                            </span>
+                        </td>
+                        <td style="font-weight: 600; color: #155724;">
+                            ₹ <%= parseFloat(c.amount || 0).toLocaleString('en-IN') %>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <div class="empty-state">
+            <p>No commission earnings found.</p>
+            <p>You will earn commissions when your downline users make transfers.</p>
+        </div>
+    <% } %>
+    
+    <div style="margin-top: 30px; text-align: center;">
+        <a href="/dashboard" class="nav-link" style="display: inline-block;">← Back to Dashboard</a>
+    </div>
+</div>
+<%- include('layout-end') %>

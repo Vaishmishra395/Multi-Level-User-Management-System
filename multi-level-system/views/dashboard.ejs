@@ -1,0 +1,47 @@
+<%- include('layout-start', {title: 'Dashboard'}) %>
+<div class="card">
+    <h1>Dashboard</h1>
+    
+    <div class="balance-card">
+        <h3>Your Balance</h3>
+        <div class="amount">₹ <%= user.balance.toLocaleString('en-IN') %></div>
+    </div>
+    
+    <% if (user.parent_id === null || user.parent_id === 0) { %>
+        <div style="background: #e3f2fd; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
+            <strong>Owner Account</strong> - You can self recharge your balance
+        </div>
+    <% } %>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center;">
+            <div style="font-size: 2em; color: #667eea; font-weight: bold;"><%= childrenCount || 0 %></div>
+            <div style="color: #666; margin-top: 5px;">Direct Users</div>
+        </div>
+        <% if (totalCommission > 0) { %>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center;">
+                <div style="font-size: 2em; color: #155724; font-weight: bold;">₹ <%= parseFloat(totalCommission || 0).toLocaleString('en-IN') %></div>
+                <div style="color: #666; margin-top: 5px;">Total Commission</div>
+            </div>
+        <% } %>
+    </div>
+    
+    <div class="nav-links">
+        <a href="/create-user" class="nav-link">➕ Create User</a>
+        <a href="/transfer" class="nav-link">💸 Transfer Money</a>
+        <a href="/downline" class="nav-link">👥 View Downline</a>
+        <a href="/change-password" class="nav-link">🔐 Change Password</a>
+        <a href="/statement" class="nav-link">📊 View Statement</a>
+        <% if (totalCommission > 0) { %>
+            <a href="/commission" class="nav-link" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">💰 Commission</a>
+        <% } %>
+        <% if (user.parent_id === null || user.parent_id === 0) { %>
+            <a href="/self-recharge" class="nav-link btn-success">💰 Self Recharge</a>
+        <% } %>
+        <% if (user.role === 'admin') { %>
+            <a href="/admin" class="nav-link" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">⚙️ Admin Panel</a>
+        <% } %>
+        <a href="/logout" class="nav-link btn-secondary">🚪 Logout</a>
+    </div>
+</div>
+<%- include('layout-end') %>

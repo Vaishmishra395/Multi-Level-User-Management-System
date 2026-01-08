@@ -1,0 +1,67 @@
+<%- include('layout-start', {title: 'Credit Balance'}) %>
+<div class="card">
+    <h2>Credit Balance to <%= user.username %></h2>
+    
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            <div>
+                <strong>User:</strong> <%= user.username %>
+            </div>
+            <div>
+                <strong>Current Balance:</strong> ₹ <%= parseFloat(user.balance || 0).toLocaleString('en-IN') %>
+            </div>
+            <% if (parent) { %>
+                <div>
+                    <strong>Parent:</strong> <%= parent.username %>
+                </div>
+                <div>
+                    <strong>Parent Balance:</strong> ₹ <%= parseFloat(parent.balance || 0).toLocaleString('en-IN') %>
+                </div>
+            <% } else { %>
+                <div>
+                    <strong>Status:</strong> Owner (No Parent)
+                </div>
+            <% } %>
+        </div>
+    </div>
+    
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div class="error"><%= error %></div>
+    <% } %>
+    <% if (typeof success !== 'undefined' && success) { %>
+        <div class="success"><%= success %></div>
+    <% } %>
+    
+    <% if (parent) { %>
+        <div style="background: #fff3cd; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #ffc107;">
+            <strong>Note:</strong> The amount will be deducted from the parent's balance (<%= parent.username %>) and credited to this user.
+        </div>
+    <% } else { %>
+        <div style="background: #d1ecf1; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #0c5460;">
+            <strong>Note:</strong> This is an owner account. The amount will be credited directly.
+        </div>
+    <% } %>
+    
+    <form method="POST">
+        <div class="form-group">
+            <label for="amount">Credit Amount (₹)</label>
+            <input 
+                type="number" 
+                id="amount" 
+                name="amount" 
+                placeholder="Enter amount to credit" 
+                min="0.01" 
+                step="0.01"
+                required 
+                autofocus
+            />
+        </div>
+        
+        <button type="submit" class="btn btn-success">Credit Balance</button>
+    </form>
+    
+    <div style="margin-top: 20px; text-align: center;">
+        <a href="/admin" class="nav-link" style="display: inline-block;">← Back to Admin Panel</a>
+    </div>
+</div>
+<%- include('layout-end') %>

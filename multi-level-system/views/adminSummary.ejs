@@ -1,0 +1,90 @@
+<%- include('layout-start', {title: 'Balance Summary'}) %>
+<div class="card">
+    <h1>Balance Summary</h1>
+    
+    <!-- Summary Statistics -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 15px; text-align: center;">
+            <div style="font-size: 2em; font-weight: bold;"><%= summary.total_users || 0 %></div>
+            <div style="opacity: 0.9; margin-top: 5px;">Total Users</div>
+        </div>
+        <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 20px; border-radius: 15px; text-align: center;">
+            <div style="font-size: 2em; font-weight: bold;">₹ <%= parseFloat(summary.total_balance || 0).toLocaleString('en-IN') %></div>
+            <div style="opacity: 0.9; margin-top: 5px;">Total Balance</div>
+        </div>
+    </div>
+    
+    <!-- Balance by Level -->
+    <% if (summary.by_level && Object.keys(summary.by_level).length > 0) { %>
+        <h2>Balance by Level</h2>
+        <table style="margin-bottom: 30px;">
+            <thead>
+                <tr>
+                    <th>Level</th>
+                    <th>User Count</th>
+                    <th>Total Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% Object.keys(summary.by_level).sort((a, b) => parseInt(a) - parseInt(b)).forEach(level => { %>
+                    <tr>
+                        <td><strong>Level <%= level %></strong></td>
+                        <td><%= summary.by_level[level].count %></td>
+                        <td style="font-weight: 600; color: #667eea;">
+                            ₹ <%= parseFloat(summary.by_level[level].total_balance || 0).toLocaleString('en-IN') %>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } %>
+    
+    <!-- All Users -->
+    <h2>All Users</h2>
+    <% if (users && users.length > 0) { %>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Level</th>
+                    <th>Parent</th>
+                    <th>Balance</th>
+                    <th>Children</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% users.forEach(u => { %>
+                    <tr>
+                        <td><%= u.id %></td>
+                        <td><strong><%= u.username %></strong></td>
+                        <td>
+                            <span class="badge" style="background: #667eea; color: white;">
+                                Level <%= u.level %>
+                            </span>
+                        </td>
+                        <td><%= u.parent_username || 'Owner' %></td>
+                        <td style="font-weight: 600; color: #667eea;">
+                            ₹ <%= parseFloat(u.balance || 0).toLocaleString('en-IN') %>
+                        </td>
+                        <td><%= u.children_count || 0 %></td>
+                        <td>
+                            <a href="/admin/user/<%= u.id %>/downline" class="nav-link" style="padding: 5px 10px; font-size: 0.85em; margin-right: 5px;">View</a>
+                            <a href="/admin/user/<%= u.id %>/credit" class="nav-link btn-success" style="padding: 5px 10px; font-size: 0.85em;">Credit</a>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <div class="empty-state">
+            <p>No users found.</p>
+        </div>
+    <% } %>
+    
+    <div style="margin-top: 30px; text-align: center;">
+        <a href="/admin" class="nav-link" style="display: inline-block;">← Back to Admin Panel</a>
+    </div>
+</div>
+<%- include('layout-end') %>
